@@ -15,15 +15,6 @@
         <!-- 抽奖主体内容 -->
         <section class="lottery-box">
             <ul class="lottery-content">
-                <!-- <li class="prize-item">奖品1</li>
-                <li class="prize-item">奖品2</li>
-                <li class="prize-item">奖品3</li>
-                <li class="prize-item">奖品4</li>
-                <li class="lottery-control">开始</li>
-                <li class="prize-item">奖品5</li>
-                <li class="prize-item">奖品6</li>
-                <li class="prize-item">奖品7</li>
-                <li class="prize-item">奖品8</li> -->
             </ul>
         </section>
 
@@ -36,6 +27,10 @@
     <script src="./lottery.js"></script>
     <script>
         var Lottery = new Lottery();
+        $('.lottery-box').on('click','.btn-control',function(){
+            console.log("run")
+            Lottery.run();
+        });
     </script>
 </body>
 </html>

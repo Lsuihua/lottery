@@ -19,26 +19,44 @@ ol,ul{
 }
 
 .lottery-box{
-    width: 92%;
+    width: 94%;
     margin:auto;
     height: auto;
 }
 .lottery-content{
     position: relative;
     width: 100%;
-    border:1px solid rgba(0,0,0,.5);
+    border:1px solid rgba(0,0,0,.1);
     border-radius: 10px;
     box-sizing: border-box;
 }
 
-.lottery-content>.lottery-item{
+.lottery-content>.lottery-item,.lottery-content>.btn-control{
     position: absolute;
     border-radius: 10px;
-    border: 1px solid rgba(0,0,0,.5);
+    border: 1px solid rgba(0,0,0,.2);
     box-sizing: border-box;
     text-align: center;
     padding:10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+.lottery-item.active{
+    border: 1px solid #f9750b;
+}
+.btn-control{
+    background: linear-gradient(45deg,#f7a510,red);
+    color: #fff;
+    letter-spacing: 4px;
+    font-weight: 800;
+    text-indent: 4px;
+    font-size: 24px;
+    text-shadow: 0 0px 2px rgba(0,0,0,.9);
+    border: 1px solid #fdb41180;
+}
+
 
 .lottery-box .lottery-control{
 

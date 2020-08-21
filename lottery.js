@@ -9,6 +9,8 @@
             "col" : 3
         };
         this.marginPd = 10;
+        // 动画周期
+        this.cycle = 3;
 
         this.lotteryData = null;
 
@@ -88,14 +90,17 @@
         // 单个奖品尺寸 ====> 总宽度 - 间距  / 列数
         var singleSize = (this.width - (this.config.col + 1) * this.marginPd) / this.config.rows;
         // 盒子高度 ===> 行数* singleSize + 间距 * row +1
-        var boxSize = this.config.rows * singleSize + this.marginPd *(this.config.rows +1);
-        $('.lottery-content').css({"height":boxSize + 'px'});
+        var boxHeight = this.config.rows * singleSize + this.marginPd *(this.config.rows +1);
+        $('.lottery-content').css({"height":boxHeight + 'px'});
 
-
+        // 奖品顺时针布局
         this.lotteryData.map((item,index) => {
             var lotteryItem = document.createElement('li');
-            console.log(lotteryItem);
             $(lotteryItem).addClass(`lottery-item lottery-item-${index+1}`).html(item.title);
+            // 默认第一个选中
+            if(index == 0){
+                $(lotteryItem).addClass('active');
+            }
             if((index + 1) <= this.config.col ){
                 $(lotteryItem).css({
                     "width":singleSize,
@@ -125,10 +130,18 @@
                     "left":this.marginPd
                 });
             }
-
-            
             $('.lottery-content').append(lotteryItem);
-        })
+        });
+        // 中间按钮区域
+        var btnControl = document.createElement('li');
+        $(btnControl).addClass('btn-control').html('开始');
+        $(btnControl).css({
+            "width":this.width - singleSize *2 - this.marginPd * 4,
+            "height":boxHeight - singleSize *2 - this.marginPd * 4,
+            "top":singleSize + this.marginPd * 2,
+            "left":singleSize + this.marginPd * 2
+        });
+        $('.lottery-content').append(btnControl);
     };
 
     // 抽奖结果
@@ -144,8 +157,16 @@
         },2000)
     };
 
+    
+
     // 开始抽奖动画
     Lottery.prototype.run = function(){
-        
-    };
+        var prizeList = document.querySelectorAll('.lottery-item');
+        prizeList.forEach(function(item,index){
+            if(!$(item).hasClass('active')){
+                
+                $(item).addClass('active').siblings().removeClass('active');
+            }
+        })
+    };  
 })();
