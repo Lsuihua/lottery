@@ -14,7 +14,12 @@
         </div>
         <!-- 抽奖主体内容 -->
         <section class="lottery-box">
+            <!-- 奖品 -->
             <ul class="lottery-content">
+            </ul>
+            <!-- 灯带 -->
+            <ul class="light-content">
+
             </ul>
         </section>
 
@@ -28,7 +33,6 @@
     <script>
         var Lottery = new Lottery();
         $('.lottery-box').on('click','.btn-control',function(){
-            console.log("run")
             Lottery.run();
         });
     </script>

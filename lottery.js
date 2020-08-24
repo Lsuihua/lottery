@@ -2,24 +2,39 @@
     var Lottery = window.Lottery = function(){
         // 获得抽奖主体内容容器
         this.contentBox = $('.lottery-content');
-        this.width = $('.lottery-content').width();
-        console.log(this.width);
+        this.size ={
+            "width": $('.lottery-content').width(),
+            "height":0,
+        };
+        // 行列布局个数
         this.config = {
             "rows": 3,
             "col" : 3
         };
-        this.marginPd = 10;
-        // 动画周期
-        this.cycle = 3;
+        this.marginPd = 10; // 每个奖品间距
+        this.light = 25;   //灯带数量
+        this.lightSize = 12;  // 灯带尺寸
 
+        // 动画周期属性配置
+        this.timer = null;
+        this.index = -1;  // 当前转动到哪个位置，起点位置
+        this.timer = 0  // 每次转动定时器
+        this.speed = 200  // 初始转动速度
+        this.times = 0;    // 转动次数
+        this.cycle = 50 // 转动基本次数：即至少需要转动多少次再进入抽奖环节
+        this.prizeIndex = -1;   // 中奖位置
+        this.showToast = false; //显示中奖弹窗      
+        this.onGoing = false;  //抽奖状态
+        this.count = 3; //抽奖次数
+
+        // 奖品数据、dom节点数据
         this.lotteryData = null;
+        this.prizeDomData = null;
 
         // 抽奖结果
         this.lotteryResult = null;
 
-        this.init(function(){
-            console.log("初始化完成");
-        });
+        this.init();
     };
 
     // 数据初始化
@@ -27,76 +42,73 @@
         var self = this;
         // 加载异步资源
         var t = setTimeout(function(){
-            // var num = self.config.rows * self.config.col -1;
-            // for(let i =0;i<num; i++){
-            //     self.lotteryData.push({
-            //         "key":i+1,
-            //         "title":`奖品${i+1}`,
-            //         "img":''
-            //     })
-            // };
             self.lotteryData = [
                 {
                     "key":1,
-                    "title":'奖品1',
-                    "img":''
+                    "title":'小米10',
+                    "img":'./imgs/mi10.png'
                 },
                 {
                     "key":2,
-                    "title":'奖品2',
-                    "img":''
+                    "title":'mackbook14',
+                    "img":'./imgs/mackbook.png'
                 },
                 {
                     "key":3,
-                    "title":'奖品3',
-                    "img":''
+                    "title":'nova7',
+                    "img":'./imgs/nova7.png'
                 },
                 {
                     "key":4,
-                    "title":'奖品4',
-                    "img":''
+                    "title":'手气真差',
+                    "img":'./imgs/null.png'
                 },
                 {
                     "key":5,
-                    "title":'奖品5',
-                    "img":''
+                    "title":'华为P40',
+                    "img":'./imgs/p40.png'
                 },
                 {
                     "key":6,
-                    "title":'奖品6',
-                    "img":''
+                    "title":'phoneX',
+                    "img":'./imgs/phone11.png'
                 },
                 {
                     "key":7,
-                    "title":'奖品7',
-                    "img":''
+                    "title":'红包',
+                    "img":'./imgs/red_package.png'
                 },
                 {
                     "key":8,
-                    "title":'奖品8',
-                    "img":''
+                    "title":'华为手环',
+                    "img":'./imgs/wristband.png'
                 }
             ];
             self.layout();
 
             callBack && callBack();
             clearInterval(t);
-        },1000)
+        },500)
     };
     
     // 抽奖内容布局
     Lottery.prototype.layout = function(){
         // 计算每项 得宽度 边距
         // 单个奖品尺寸 ====> 总宽度 - 间距  / 列数
-        var singleSize = (this.width - (this.config.col + 1) * this.marginPd) / this.config.rows;
+        var singleSize = (this.size.width - (this.config.col + 1) * this.marginPd) / this.config.col;
         // 盒子高度 ===> 行数* singleSize + 间距 * row +1
         var boxHeight = this.config.rows * singleSize + this.marginPd *(this.config.rows +1);
+        this.size.height = boxHeight;
         $('.lottery-content').css({"height":boxHeight + 'px'});
 
         // 奖品顺时针布局
         this.lotteryData.map((item,index) => {
             var lotteryItem = document.createElement('li');
-            $(lotteryItem).addClass(`lottery-item lottery-item-${index+1}`).html(item.title);
+            var _dom = `<div class="prize-box">
+                        <img class="pic" src="${item.img}"/>
+                        <p class="text">${item.title}</p>
+                    </div>`;
+            $(lotteryItem).addClass(`lottery-item lottery-item-${index+1}`).html(_dom);
             // 默认第一个选中
             if(index == 0){
                 $(lotteryItem).addClass('active');
@@ -126,7 +138,7 @@
                 $(lotteryItem).css({
                     "width":singleSize,
                     "height":singleSize,
-                    "bottom":this.marginPd * (this.lotteryData.length - index+1) + singleSize * (this.lotteryData.length - index),
+                    "top":this.marginPd * (this.lotteryData.length - index+1) + singleSize * (this.lotteryData.length - index),
                     "left":this.marginPd
                 });
             }
@@ -134,39 +146,121 @@
         });
         // 中间按钮区域
         var btnControl = document.createElement('li');
-        $(btnControl).addClass('btn-control').html('开始');
+        $(btnControl).addClass('btn-control').html('开始抽奖');
         $(btnControl).css({
-            "width":this.width - singleSize *2 - this.marginPd * 4,
+            "width":this.size.width - singleSize *2 - this.marginPd * 4,
             "height":boxHeight - singleSize *2 - this.marginPd * 4,
             "top":singleSize + this.marginPd * 2,
             "left":singleSize + this.marginPd * 2
         });
         $('.lottery-content').append(btnControl);
+        // 获取奖品dom节点
+        this.prizeDomData = document.querySelectorAll('.lottery-item');
+
+        // 外围灯带 布局
+        //每个灯得距离 ===> 周长 - 总数量长度  / （数量-1）
+        var l = this.size.width * 2 + this.size.height * 2;
+        var thanL = l - this.light * this.lightSize;
+        var lightPd = Number((thanL / (this.light -1)).toFixed(2));
+        for(var i=0;i<this.light;i++){
+            var lightItem = document.createElement('li');
+            $(lightItem).addClass('light-item');
+            if(i%2 == 0){
+                $(lightItem).addClass('light-item-even');
+            }else{
+                $(lightItem).addClass('light-item-odd');
+            }
+            var len = Number((i * lightPd + (i+1) * this.lightSize).toFixed(2));
+            if(len <= this.size.width){
+                $(lightItem).css({
+                    "width":this.lightSize,
+                    "height":this.lightSize,
+                    "top":0,
+                    "left": len
+                });
+            }else if(len > this.size.width && len <= this.size.width + this.size.height){
+                $(lightItem).css({
+                    "width":this.lightSize,
+                    "height":this.lightSize,
+                    "top":len - this.size.width,
+                    "right": 0
+                });
+            }else if(len > this.size.width + this.size.height && len <= 2*this.size.width + this.size.height){
+                console.log(i,len,2*this.size.width + this.size.height,len - this.size.width - this.size.height);
+                $(lightItem).css({
+                    "width":this.lightSize,
+                    "height":this.lightSize,
+                    "bottom":0,
+                    "right": len - this.size.width - this.size.height
+                });
+            }else if(len > 2*this.size.width + this.size.height){
+                $(lightItem).css({
+                    "width":this.lightSize,
+                    "height":this.lightSize,
+                    "bottom":len - 2 * this.size.width - this.size.height,
+                    "left": 0
+                });
+            }
+            $('.light-content').append(lightItem);
+        }
     };
 
     // 抽奖结果
-    Lottery.prototype.result = function(){
+    Lottery.prototype.requestRes = function(){
         var self = this;
-        var t = setTimeout(function(){
-            self.lotteryResult = {
-                "key":1,
-                "title":'奖品1',
-                "img":''
-            };
-            clearInterval(t);
-        },2000)
+        // 随机获得一个中奖位置 || 中奖位置,可由后台返回 
+        const index = parseInt(Math.random() * 10, 0) || 0;  
+        index > 7 ? self.prizeIndex = 7 : self.prizeIndex = index;
+        console.log(self.prizeIndex);
+        self.onGoing = true;
+        self.count --;
+        self.animation();
     };
 
-    
+    Lottery.prototype.updataed = function(){
+        this.times ++;
+        for(var i =0;i<this.prizeDomData.length;i++){
+            if($(this.prizeDomData[i]).hasClass('active')){
+                if(i == this.prizeDomData.length-1){
+                    i = -1;
+                }
+                $(this.prizeDomData[i+1]).addClass('active').siblings().removeClass('active');
+                this.index = i+1;
+                break;
+            }
+        }
+    }
+
+    Lottery.prototype.animation = function(){
+        var self = this;
+        self.updataed();
+        // 如果当前转动次数达到要求 && 目前转到的位置是中奖位置
+        if (self.times > self.cycle + 10 && self.prizeIndex === self.index) {
+            clearTimeout(self.timer);
+            self.onGoing = false;
+            self.prizeIndex = -1;
+            self.times = 0;
+            self.speed = 200;             
+        }else{
+            if (self.times < self.cycle) {
+                self.speed -= 20;
+            }else if (self.times > self.cycle + 10 && ((self.prizeIndex === 0 && self.index === 7) || self.prizeIndex === self.index + 1)) {
+                self.speed += 110;
+            } else {
+                self.speed += 20;
+            }      
+            if (self.speed < 40) {self.speed = 40}
+            self.timer = setTimeout(() => {
+                clearTimeout(self.timer);
+                self.animation();
+            }, self.speed);
+        }
+    };
 
     // 开始抽奖动画
     Lottery.prototype.run = function(){
-        var prizeList = document.querySelectorAll('.lottery-item');
-        prizeList.forEach(function(item,index){
-            if(!$(item).hasClass('active')){
-                
-                $(item).addClass('active').siblings().removeClass('active');
-            }
-        })
+        if(!this.onGoing && this.count > 0){
+            this.requestRes();
+        }
     };  
 })();

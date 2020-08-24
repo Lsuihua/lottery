@@ -22,6 +22,7 @@ ol,ul{
     width: 94%;
     margin:auto;
     height: auto;
+    position: relative;
 }
 .lottery-content{
     position: relative;
@@ -41,11 +42,22 @@ ol,ul{
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    z-index: 3;
 }
 
 .lottery-item.active{
     border: 1px solid #f9750b;
 }
+.lottery-item.active::after{
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.1);
+}
+
 .btn-control{
     background: linear-gradient(45deg,#f7a510,red);
     color: #fff;
@@ -57,11 +69,46 @@ ol,ul{
     border: 1px solid #fdb41180;
 }
 
-
-.lottery-box .lottery-control{
-
+.light-content{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+.light-content>.light-item{
+    border-radius: 50%;
+    position: absolute;
 }
 
-.lottery-box .prize-item{
+.light-content>.light-item-even{
+    animation: colorEven 1s infinite;
+}
+.light-content>.light-item-odd{
+    animation: colorOdd 1s infinite;
+}
 
+.lottery-box .prize-box{
+    width: 100%;
+    text-align: center;
+}
+.lottery-box .prize-box>.pic{
+    width: 70%;
+}
+.lottery-box .prize-box>.text{
+    margin:2px 0 0;
+    font-size: 12px;
+}
+
+
+@keyframes colorEven{
+    0%{background: #f9750b;}
+    100%{background: #f7a510;}
+}
+
+@keyframes colorOdd{
+    0%{background: #f7a510;}
+    100%{background: #f9750b;}
 }
