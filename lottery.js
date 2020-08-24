@@ -3,7 +3,7 @@
         // 获得抽奖主体内容容器
         this.contentBox = $('.lottery-content');
         this.size ={
-            "width": $('.lottery-content').width(),
+            "width": 0,
             "height":0,
         };
         // 行列布局个数
@@ -11,17 +11,17 @@
             "rows": 3,
             "col" : 3
         };
-        this.marginPd = 10; // 每个奖品间距
+        this.marginPd = 8; // 每个奖品间距
         this.light = 25;   //灯带数量
         this.lightSize = 12;  // 灯带尺寸
 
         // 动画周期属性配置
         this.timer = null;
         this.index = -1;  // 当前转动到哪个位置，起点位置
-        this.timer = 0  // 每次转动定时器
-        this.speed = 200  // 初始转动速度
+        this.timer = 0;  // 每次转动定时器
+        this.speed = 200;  // 初始转动速度
         this.times = 0;    // 转动次数
-        this.cycle = 50 // 转动基本次数：即至少需要转动多少次再进入抽奖环节
+        this.cycle = 50; // 转动基本次数：即至少需要转动多少次再进入抽奖环节
         this.prizeIndex = -1;   // 中奖位置
         this.showToast = false; //显示中奖弹窗      
         this.onGoing = false;  //抽奖状态
@@ -33,7 +33,6 @@
 
         // 抽奖结果
         this.lotteryResult = null;
-
         this.init();
     };
 
@@ -88,18 +87,25 @@
 
             callBack && callBack();
             clearInterval(t);
-        },500)
+        },500);
     };
     
     // 抽奖内容布局
     Lottery.prototype.layout = function(){
         // 计算每项 得宽度 边距
         // 单个奖品尺寸 ====> 总宽度 - 间距  / 列数
-        var singleSize = (this.size.width - (this.config.col + 1) * this.marginPd) / this.config.col;
+        var boxWidth = $('.lottery-box').width() - this.lightSize * 4;
+        var singleSize = (boxWidth - (this.config.col + 1) * this.marginPd) / this.config.col;
+        console.log(singleSize);
         // 盒子高度 ===> 行数* singleSize + 间距 * row +1
-        var boxHeight = this.config.rows * singleSize + this.marginPd *(this.config.rows +1);
+        var boxHeight = this.config.rows * singleSize + this.marginPd * (this.config.rows +1);
         this.size.height = boxHeight;
-        $('.lottery-content').css({"height":boxHeight + 'px'});
+        this.size.width = boxWidth;
+        $('.lottery-content').css({
+            "width":boxWidth + 'px',
+            "height":boxHeight + 'px',
+            "margin":this.lightSize * 2
+        });
 
         // 奖品顺时针布局
         this.lotteryData.map((item,index) => {
@@ -159,7 +165,10 @@
 
         // 外围灯带 布局
         //每个灯得距离 ===> 周长 - 总数量长度  / （数量-1）
-        var l = this.size.width * 2 + this.size.height * 2;
+
+        var _lightW = $('.lottery-box').width(),
+            _lightH = $('.lottery-box').height();
+        var l = _lightW * 2 + _lightH * 2;
         var thanL = l - this.light * this.lightSize;
         var lightPd = Number((thanL / (this.light -1)).toFixed(2));
         for(var i=0;i<this.light;i++){
@@ -175,30 +184,29 @@
                 $(lightItem).css({
                     "width":this.lightSize,
                     "height":this.lightSize,
-                    "top":0,
+                    "top":this.lightSize /2,
                     "left": len
                 });
-            }else if(len > this.size.width && len <= this.size.width + this.size.height){
+            }else if(len > _lightW && len <= _lightW + _lightH){
                 $(lightItem).css({
                     "width":this.lightSize,
                     "height":this.lightSize,
-                    "top":len - this.size.width,
-                    "right": 0
+                    "top":len - _lightW,
+                    "right":this.lightSize /2
                 });
-            }else if(len > this.size.width + this.size.height && len <= 2*this.size.width + this.size.height){
-                console.log(i,len,2*this.size.width + this.size.height,len - this.size.width - this.size.height);
+            }else if(len > _lightW + _lightH && len <= 2 * _lightW + _lightH){
                 $(lightItem).css({
                     "width":this.lightSize,
                     "height":this.lightSize,
-                    "bottom":0,
-                    "right": len - this.size.width - this.size.height
+                    "bottom":this.lightSize /2,
+                    "right": len - _lightW - _lightH
                 });
-            }else if(len > 2*this.size.width + this.size.height){
+            }else if(len > 2 * _lightW + _lightH){
                 $(lightItem).css({
                     "width":this.lightSize,
                     "height":this.lightSize,
-                    "bottom":len - 2 * this.size.width - this.size.height,
-                    "left": 0
+                    "bottom":len - 2 * _lightW - _lightH,
+                    "left": this.lightSize /2
                 });
             }
             $('.light-content').append(lightItem);
@@ -209,7 +217,7 @@
     Lottery.prototype.requestRes = function(){
         var self = this;
         // 随机获得一个中奖位置 || 中奖位置,可由后台返回 
-        const index = parseInt(Math.random() * 10, 0) || 0;  
+        var index = parseInt(Math.random() * 10, 0) || 0;  
         index > 7 ? self.prizeIndex = 7 : self.prizeIndex = index;
         console.log(self.prizeIndex);
         self.onGoing = true;
