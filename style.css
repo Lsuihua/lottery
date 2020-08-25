@@ -9,7 +9,10 @@ ol,ul{
     margin: 0;
     padding: 0;
 }
-
+img{
+    display: inline-block;
+    max-width: 100%;
+}
 .main{
     position: relative;
     min-width: 320px;
@@ -17,27 +20,66 @@ ol,ul{
     max-width: 480px;
     margin: 0 auto;
     min-height: 100vh;
-    background: #ff5722;
+    background: linear-gradient(-45deg, #e61831, #f5b21b);
+    padding-bottom: 20px;
+    box-sizing: border-box;
 }
 .main::before{
     content: '';
     display: table;
     clear: both;
 }
-.lottery-box{
-    width: 94%;
-    margin:auto;
-    height:auto;
-    margin:20px auto;
+
+.tips{
+    text-align: center;
+    font-size: 14px;
+}
+.tips>.text{
+    display: inline-block;
+    max-width: 100%;
+    min-width: 50%;
+    padding: 6px 12px;
+    background: #ffc107;
+    color: #790000;
+    border-radius: 6px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 2px rgba(0,0,0,.2);
     position: relative;
-    background:#FFC107;
-    border-radius: 10px;
+}
+.tips>.text::before,.tips>.text::after{
+    content: '';
+    display: block;
+    width: 2px;
+    height: 30px;
+    background: #ffc107;
+    color: #790000;
+    position: absolute;
+    top: 30px;
+    z-index: 4;
+    box-shadow: 1px 0 1px rgba(0,0,0,.3);
+}
+.tips>.text::before{
+    left: 16%;
+}
+.tips>.text::after{
+    right: 16%;
+}
+section{
+    width: 94%;
+    height:auto;
+    margin:30px auto;
+    position: relative;
     overflow: hidden;
-    box-shadow: 4px 4px 4px #bf0c0c;
+    z-index: 3;
+    border-radius: 10px;
+}
+.lottery-box{
+    background:#FFC107;
+    box-shadow: 0px 0px 4px #bf0c0c;
 }
 .lottery-content{
     position: relative;
-    border-radius: 10px;
+    border-radius: 6px;
     background: #ff5722;
     box-shadow: 0 0 4px rgba(0,0,0,.4) inset;
 }
@@ -59,7 +101,8 @@ ol,ul{
 
 .lottery-item.active{
     border: 1px solid #f9750b;
-    background: #f9db07;
+    background: #fff404;
+    box-shadow: 0 0 4px #790000 inset;
 }
 
 .lottery-content>.btn-control{
@@ -85,14 +128,14 @@ ol,ul{
 .light-content>.light-item{
     border-radius: 50%;
     position: absolute;
-    box-shadow: 0 0 2px rgba(0,0,0,.8);
+    box-shadow: 0 0 2px #ffe501 inset;
 }
 
 .light-content>.light-item-even{
-    animation: colorEven 2s infinite;
+    animation: colorEven 3s infinite;
 }
 .light-content>.light-item-odd{
-    animation: colorOdd 2s infinite;
+    animation: colorOdd 3s infinite;
 }
 
 .lottery-box .prize-box{
@@ -100,13 +143,145 @@ ol,ul{
     text-align: center;
 }
 .lottery-box .prize-box>.pic{
-    width: 70%;
+    width: 75%;
 }
 .lottery-box .prize-box>.text{
     margin:2px 0 0;
     font-size: 12px;
 }
 
+/* 规则  记录 */
+.rule>.hd{
+    transform: translateY(50%);
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0 2px rgba(0,0,0,.5);
+    letter-spacing: 2px;
+    text-indent: 2px;
+    font-size: 16px;
+}
+.rule>.hd>span{
+    padding: 6px 12px;
+    box-sizing: border-box;
+    display: inline-block;
+    position: relative;
+    background: #ffc107;
+    box-shadow: 0 0 2px rgba(0,0,0,.3);
+}
+
+.rule>.hd>span::before,.rule>.hd>span::after{
+    content: '';
+    display: block;
+    position: absolute;
+    width: 20px;
+    height: 100%;
+    top: 0;
+    background: #ffc107;
+}
+.rule>.hd>span::before{
+    left: -19px;
+    clip-path: polygon(
+        0% 0%,
+        100% 0%,
+        100% 100%,
+        0% 100%,
+        100% 50%,
+        0% 0%
+    );
+}
+
+.rule>.hd>span::after{
+    right:-19px;
+    clip-path: polygon(
+        0% 0%,
+        100% 0%,
+        0% 50%,
+        100% 100%,
+        0% 1000%,
+        0% 0%
+    );
+}
+
+.rule>.rule-box{
+    border: 1px solid #ffe501;
+    padding: 30px 12px 12px 12px;
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 12px;
+    line-height: 20px;
+    border-radius: 10px;
+    background: rgba(0,0,0,.1);
+}
+
+.xs{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+
+/* 弹窗样式 */
+.dialog{
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: -9;
+    background: rgba(0,0,0,.5);
+}
+.dialog-show{
+    z-index: 9;
+}
+.dialog-show>.dialog-box{
+    width: 80%;
+    min-height: 200px;
+    max-height: 70vh;
+    background: #fff;
+    border-radius: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    padding-bottom: 50px;
+    box-sizing: border-box;
+    box-shadow: 2px 0px 4px rgba(0,0,0,.5);
+}
+
+.dialog>.dialog-box>.dialog-content{
+
+}
+
+.dialog>.dialog-box>.btn-group{
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+}
+.dialog>.dialog-box>.btn-group>.btn{
+    padding: 6px 22px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    background: #ff5722;
+    color: #fff;
+    font-size: 14px;
+    display: inline-block;
+    height: 30px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 1px rgb(167 70 34);
+}
+
+.dialog>.dialog-box .close{
+    position: absolute;
+    right: 10px;
+    font-size: 26px;
+    color: #969696;
+    z-index: 4;
+}
 
 @keyframes colorEven{
     0%{background: #f9750b;}

@@ -11,9 +11,9 @@
             "rows": 3,
             "col" : 3
         };
-        this.marginPd = 8; // 每个奖品间距
-        this.light = 25;   //灯带数量
-        this.lightSize = 12;  // 灯带尺寸
+        this.marginPd = 6; // 每个奖品间距
+        this.light = 31;   //灯带数量
+        this.lightSize = 10;  // 灯带尺寸
 
         // 动画周期属性配置
         this.timer = null;
@@ -166,21 +166,24 @@
         // 外围灯带 布局
         //每个灯得距离 ===> 周长 - 总数量长度  / （数量-1）
 
-        var _lightW = $('.lottery-box').width(),
-            _lightH = $('.lottery-box').height();
+        var _lightW = $('.lottery-box').width() - this.lightSize,
+            _lightH = $('.lottery-box').height() - this.lightSize;
         var l = _lightW * 2 + _lightH * 2;
-        var thanL = l - this.light * this.lightSize;
-        var lightPd = Number((thanL / (this.light -1)).toFixed(2));
+        var thanL = l - this.light * this.lightSize;  // 间距长度
+        var lightPd = Number((thanL / (this.light -1)).toFixed(2));  //原点间距
         for(var i=0;i<this.light;i++){
+            // 最后一个不渲染
+            if(i == this.light - 1)return;
             var lightItem = document.createElement('li');
             $(lightItem).addClass('light-item');
+            // 灯带奇数偶数颜色
             if(i%2 == 0){
                 $(lightItem).addClass('light-item-even');
             }else{
                 $(lightItem).addClass('light-item-odd');
             }
             var len = Number((i * lightPd + (i+1) * this.lightSize).toFixed(2));
-            if(len <= this.size.width){
+            if(len <= _lightW){
                 $(lightItem).css({
                     "width":this.lightSize,
                     "height":this.lightSize,
@@ -191,7 +194,7 @@
                 $(lightItem).css({
                     "width":this.lightSize,
                     "height":this.lightSize,
-                    "top":len - _lightW,
+                    "top":len - _lightW + this.lightSize /2,
                     "right":this.lightSize /2
                 });
             }else if(len > _lightW + _lightH && len <= 2 * _lightW + _lightH){
@@ -199,13 +202,13 @@
                     "width":this.lightSize,
                     "height":this.lightSize,
                     "bottom":this.lightSize /2,
-                    "right": len - _lightW - _lightH
+                    "right": len - _lightW - _lightH + this.lightSize /2
                 });
             }else if(len > 2 * _lightW + _lightH){
                 $(lightItem).css({
                     "width":this.lightSize,
                     "height":this.lightSize,
-                    "bottom":len - 2 * _lightW - _lightH,
+                    "bottom":len - 2 * _lightW - _lightH + this.lightSize /2,
                     "left": this.lightSize /2
                 });
             }
@@ -245,6 +248,7 @@
         // 如果当前转动次数达到要求 && 目前转到的位置是中奖位置
         if (self.times > self.cycle + 10 && self.prizeIndex === self.index) {
             clearTimeout(self.timer);
+            $('.dialog').addClass('dialog-show');
             self.onGoing = false;
             self.prizeIndex = -1;
             self.times = 0;

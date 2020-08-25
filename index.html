@@ -10,7 +10,10 @@
     <div class="main">
         <!-- 抽奖banner -->
         <div class="banner">
-
+            <img src="./imgs/banner.png"/>
+        </div>
+        <div class="tips">
+            <span class="text">您还有1次抽奖机会</span>
         </div>
         <!-- 抽奖主体内容 -->
         <section class="lottery-box">
@@ -18,14 +21,39 @@
             <ul class="lottery-content">
             </ul>
             <!-- 灯带 -->
-            <ul class="light-content">
-
-            </ul>
+            <ul class="light-content"></ul>
         </section>
+
+        <!-- 抽奖 规则 | 记录 -->
+        <section class="rule">
+            <div class="hd">
+                <span>活动规则 ></span>
+            </div>
+            <ol class="rule-box">
+                <li>活动时间：2018年1月25日—2018年2月9日（在活动时间内，活动资源送完则活动自动结束）;</li>
+                <li>参与方式：在“浙江移动”微信公众号中回复“福袋”关键字;</li>
+                <li>活动规则：用户在活动期间参与活动，可通过本人参与、受邀、邀请好友三种方式参与活动，每个手机号累计最多获得11个福袋;</li>
+                <li>活动奖品：福袋的中奖概率为100%，内含奖励及具体中奖概率如下;</li>
+            </ol>
+        </section>
+
+        <!-- 修饰图 -->
+        <img class="xs" src="./imgs/xs_bottom.png"/>
 
         <!-- 抽奖弹窗 -->
         <div class="dialog">
+            <!-- 主体内容 -->
+            <div class="dialog-box">
+                <div class="dialog-content">
 
+                </div>
+                <!-- 底部按钮 -->
+                <div class="btn-group">
+                    <span class="btn">立即领取</span>
+                </div>
+                <!-- 关闭 -->
+                <span class="close">×</span>
+            </div>
         </div>
     </div>
     <script src="./zepto.js"></script>
@@ -34,6 +62,11 @@
         var Lottery = new Lottery();
         $('.lottery-box').on('click','.btn-control',function(){
             Lottery.run();
+        });
+
+        // 关闭弹窗
+        $('.dialog').on('click','.close',function(){
+            $('.dialog').removeClass('dialog-show');
         });
     </script>
 </body>
