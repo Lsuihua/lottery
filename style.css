@@ -23,6 +23,7 @@ img{
     background: linear-gradient(-45deg, #e61831, #f5b21b);
     padding-bottom: 20px;
     box-sizing: border-box;
+    overflow: hidden scroll;
 }
 .main::before{
     content: '';
@@ -249,7 +250,13 @@ section{
 }
 
 .dialog>.dialog-box>.dialog-content{
-
+    text-align: center;
+}
+.dialog>.dialog-box>.dialog-content .pic{
+    width: 60%;
+}
+.dialog>.dialog-box>.dialog-content .title{
+    font-size: 20px;
 }
 
 .dialog>.dialog-box>.btn-group{
@@ -281,6 +288,7 @@ section{
     font-size: 26px;
     color: #969696;
     z-index: 4;
+    top: 0;
 }
 
 @keyframes colorEven{

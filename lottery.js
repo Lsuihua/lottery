@@ -96,7 +96,6 @@
         // 单个奖品尺寸 ====> 总宽度 - 间距  / 列数
         var boxWidth = $('.lottery-box').width() - this.lightSize * 4;
         var singleSize = (boxWidth - (this.config.col + 1) * this.marginPd) / this.config.col;
-        console.log(singleSize);
         // 盒子高度 ===> 行数* singleSize + 间距 * row +1
         var boxHeight = this.config.rows * singleSize + this.marginPd * (this.config.rows +1);
         this.size.height = boxHeight;
@@ -223,6 +222,11 @@
         var index = parseInt(Math.random() * 10, 0) || 0;  
         index > 7 ? self.prizeIndex = 7 : self.prizeIndex = index;
         console.log(self.prizeIndex);
+        self.lotteryData.map(function(item,k){
+            if(item.key == index + 1){
+                self.lotteryResult = item;
+            }
+        });
         self.onGoing = true;
         self.count --;
         self.animation();
@@ -249,6 +253,9 @@
         if (self.times > self.cycle + 10 && self.prizeIndex === self.index) {
             clearTimeout(self.timer);
             $('.dialog').addClass('dialog-show');
+            var _html = `<p class="title">${self.lotteryResult.title}</p>
+                        <img class="pic" src="${self.lotteryResult.img}"/>`;
+            $('.dialog-content').html(_html);
             self.onGoing = false;
             self.prizeIndex = -1;
             self.times = 0;
