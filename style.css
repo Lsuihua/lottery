@@ -23,7 +23,6 @@ img{
     background: linear-gradient(-45deg, #e61831, #f5b21b);
     padding-bottom: 20px;
     box-sizing: border-box;
-    overflow: hidden scroll;
 }
 .main::before{
     content: '';
